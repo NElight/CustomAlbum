@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class ImageCell;
 @protocol ImageCellDelegate <NSObject>
 
 - (void)panGestureBegin:(UIPanGestureRecognizer *)pan;
+
+- (void)imageChoose:(BOOL)isChoose inCell:(ImageCell *)cell;
 
 @end
 
@@ -22,5 +24,7 @@
 @property (nonatomic, assign) BOOL isGestureUseful;
 
 @property (nonatomic, weak) id<ImageCellDelegate> delegate;
+
+@property (nonatomic, assign) BOOL hideChooseBtn;
 
 @end

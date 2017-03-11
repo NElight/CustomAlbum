@@ -16,4 +16,6 @@
 
 @property (nonatomic, strong) UICollectionViewCell *selectedCell;
 
+@property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveTran;
+
 @end

@@ -11,8 +11,9 @@
 #import "ImageCell.h"
 #import "UICollectionView+IndexPathInRect.h"
 #import "PhotoDetailViewController.h"
+#import "ZGPhotoAnimation.h"
 
-@interface PhotoScanViewController ()<PHPhotoLibraryChangeObserver, UICollectionViewDataSource, UICollectionViewDelegate>
+@interface PhotoScanViewController ()<PHPhotoLibraryChangeObserver, UICollectionViewDataSource, UICollectionViewDelegate, UINavigationControllerDelegate, ImageCellDelegate>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 
@@ -22,15 +23,23 @@
 
 @property (nonatomic, strong) NSMutableDictionary *imageCache;
 
+
+@property (nonatomic, strong) ZGPhotoAnimation *phAni;
+
+@property (nonatomic, assign) BOOL interactive;
+
+@property (nonatomic, strong) NSMutableArray *selectedImageArr;
+
 @end
 
 @implementation PhotoScanViewController
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    
+    self.interactive = NO;
     [self createCollectionView];
     
     self.imageManager = [PHCachingImageManager defaultManager];
@@ -58,6 +67,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     PHAsset *asset = [self.fetchResult objectAtIndex:indexPath.item];
     ImageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
+    cell.delegate = self;
     
     if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) {
         
@@ -80,6 +90,7 @@
     PhotoDetailViewController *vc = [[PhotoDetailViewController alloc]init];
     vc.selectedIndexPath = indexPath;
     vc.fetchResult = self.fetchResult;
+    self.navigationController.delegate = vc;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -88,12 +99,15 @@
     CGFloat scale = [UIScreen mainScreen].scale;
     self.thumbnailSize = CGSizeMake(self.view.bounds.size.width * scale, self.view.bounds.size.height  * scale);
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addAsset)];
+    UIBarButtonItem *add = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addAsset)];
+    UIBarButtonItem *finish = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finishChoose)];
+    self.navigationItem.rightBarButtonItems = @[add, finish];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self updateCachedAssets];
+    self.navigationController.delegate = nil;
 }
 
 - (void)updateCachedAssets {
@@ -188,6 +202,12 @@
     }];
 }
 
+- (void)finishChoose{
+    PhotoDetailViewController *vc = [[PhotoDetailViewController alloc]init];
+    vc.assetArr = self.selectedImageArr;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
     PHFetchResultChangeDetails *detail = [changeInstance changeDetailsForFetchResult:self.fetchResult];
     if (!detail) {
@@ -232,6 +252,17 @@
     [self updateCachedAssets];
 }
 
+- (void)imageChoose:(BOOL)isChoose inCell:(ImageCell *)cell {
+    NSIndexPath *index = [self.collectionView indexPathForCell:cell];
+    PHAsset *asset = [self.fetchResult objectAtIndex:index.item];
+    if (isChoose) {
+        [self.selectedImageArr addObject:asset];
+    }else {
+        [self.selectedImageArr removeObject:asset];
+    }
+    
+}
+
 - (NSMutableDictionary *)imageCache {
     if (!_imageCache) {
         _imageCache = [NSMutableDictionary dictionaryWithCapacity:0];
@@ -242,6 +273,13 @@
 - (void)resetCachedAssets {
     [self.imageManager stopCachingImagesForAllAssets];
     self.previousPreheatRect = CGRectZero;
+}
+
+- (NSMutableArray *)selectedImageArr {
+    if (!_selectedImageArr) {
+        _selectedImageArr = [NSMutableArray arrayWithCapacity:0];
+    }
+    return _selectedImageArr;
 }
 
 - (void)didReceiveMemoryWarning {
