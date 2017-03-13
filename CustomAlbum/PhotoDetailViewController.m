@@ -54,6 +54,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.interactive = NO;
+    self.view.backgroundColor = [UIColor whiteColor];
     [self createCollectionView];
     
     [self createPageControl];
@@ -112,16 +113,15 @@
 
 // MARK: -----------ImageCellDelegate
 - (void)panGestureBegin:(UIPanGestureRecognizer *)pan {
+    CGFloat distance = 0.f;
+    CGFloat per = 0.f;
     
-    CGFloat distance = sqrt(pow(self.snapView.center.x - self.selectedCell.center.x, 2) + pow(self.snapView.center.y - self.selectedCell.center.y, 2));
-#define maxDistance 1000
-    CGFloat per = distance / maxDistance;
     
     if (pan.state == UIGestureRecognizerStateBegan) {
         UIView *view = pan.view;
         self.snapView = [view snapshotViewAfterScreenUpdates:NO];
         view.hidden = YES;
-        CGPoint p = [self.view convertPoint:view.center toView:self.view];
+        CGPoint p = [self.collectionView convertPoint:view.center toView:self.view];
         self.snapView.center = p;
         [self.view addSubview:self.snapView];
         self.startPoint = [pan locationInView:self.view];
@@ -136,7 +136,12 @@
         CGFloat tranY = [pan locationOfTouch:0 inView:self.view].y - _startPoint.y;
         self.startPoint = [pan locationOfTouch:0 inView:self.view];
         self.snapView.center = CGPointApplyAffineTransform(self.snapView.center, CGAffineTransformMakeTranslation(tranX, tranY));
-        
+        if (self.snapView) {
+            CGPoint p = [self.collectionView convertPoint:self.selectedCell.center toView:self.view];
+            distance = sqrt(pow(self.snapView.center.x - p.x, 2) + pow(self.snapView.center.y - p.y, 2));
+#define maxDistance 300
+            per = distance / maxDistance >= 1 ? 0.99 : distance / maxDistance;
+        }
         [self.navigationDelegate.interactiveTran updateInteractiveTransition:per];
     }else if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateCancelled) {
         self.selectedCell.hidden = NO;
@@ -147,8 +152,10 @@
         }
         self.interactive = NO;
         [self.snapView removeFromSuperview];
+        self.snapView = nil;
     }else {
         self.interactive = NO;
+        self.snapView = nil;
     }
 }
 

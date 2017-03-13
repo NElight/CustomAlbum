@@ -107,6 +107,7 @@
     PhotoScanViewController *toVC = [context viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView *containerView = [context containerView];
     [containerView addSubview:toVC.view];
+    [containerView addSubview:fromVC.view];
     fromVC.view.frame = CGRectMake(0, 0, fromVC.view.bounds.size.width, fromVC.view.bounds.size.height);
     
     
@@ -153,10 +154,9 @@
 //    
 //    pingAnimation.delegate = self;
 //    [maskLayer addAnimation:pingAnimation forKey:@"pingInvert"];
-    fromVC.collectionView.alpha = 1.0;
-    toVC.view.alpha = 1.0;
     [UIView animateWithDuration:[self transitionDuration:context] animations:^{
-        fromVC.collectionView.alpha = 0.0;
+        fromVC.view.alpha = 0.0f;
+        
     } completion:^(BOOL finished) {
         BOOL isCancel = [context transitionWasCancelled];
         [context completeTransition:!isCancel];
