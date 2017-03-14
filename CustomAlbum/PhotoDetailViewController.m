@@ -124,7 +124,7 @@
         CGPoint p = [self.collectionView convertPoint:view.center toView:self.view];
         self.snapView.center = p;
         [self.view addSubview:self.snapView];
-        self.startPoint = [pan locationInView:self.view];
+        self.startPoint = CGPointZero;
         self.selectedCell = (ImageCell*)view;
         
         self.navigationDelegate = (PhotoScanViewController *)self.navigationController.delegate;
@@ -132,10 +132,9 @@
         [self.navigationController popViewControllerAnimated:YES];
         
     }else if (pan.state == UIGestureRecognizerStateChanged) {
-        CGFloat tranX = [pan locationOfTouch:0 inView:self.view].x - _startPoint.x;
-        CGFloat tranY = [pan locationOfTouch:0 inView:self.view].y - _startPoint.y;
-        self.startPoint = [pan locationOfTouch:0 inView:self.view];
-        self.snapView.center = CGPointApplyAffineTransform(self.snapView.center, CGAffineTransformMakeTranslation(tranX, tranY));
+        CGPoint trans = [pan translationInView:self.view];
+        self.snapView.center = CGPointApplyAffineTransform(self.snapView.center, CGAffineTransformMakeTranslation(trans.x - self.startPoint.x, trans.y - self.startPoint.y));
+        self.startPoint = trans;
         if (self.snapView) {
             CGPoint p = [self.collectionView convertPoint:self.selectedCell.center toView:self.view];
             distance = sqrt(pow(self.snapView.center.x - p.x, 2) + pow(self.snapView.center.y - p.y, 2));

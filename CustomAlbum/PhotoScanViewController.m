@@ -205,7 +205,10 @@
 - (void)finishChoose{
     PhotoDetailViewController *vc = [[PhotoDetailViewController alloc]init];
     vc.assetArr = self.selectedImageArr;
+    self.navigationController.delegate = vc;
     [self.navigationController pushViewController:vc animated:YES];
+    
+    
 }
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {

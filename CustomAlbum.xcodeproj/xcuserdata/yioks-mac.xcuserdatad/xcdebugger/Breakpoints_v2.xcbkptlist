@@ -46,13 +46,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CustomAlbum/ZGPhotoAnimation.m"
-            timestampString = "511067896.995731"
+            filePath = "CustomAlbum/PhotoDetailViewController.m"
+            timestampString = "511084282.196491"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "-popAnimation:"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "-navigationController:interactionControllerForAnimationController:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -63,11 +63,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CustomAlbum/PhotoDetailViewController.m"
-            timestampString = "511068497.616522"
+            timestampString = "511088906.597084"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "-panGestureBegin:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CustomAlbum/PhotoDetailViewController.m"
+            timestampString = "511088947.537034"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
             landmarkName = "-panGestureBegin:"
             landmarkType = "7">
          </BreakpointContent>
